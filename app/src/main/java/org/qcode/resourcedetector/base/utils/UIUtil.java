@@ -34,8 +34,6 @@ import java.util.TimerTask;
 /**
  * 与UI相关的帮助类
  *
- * @author fpliu@iflytek.com 2014-1-2
- *
  */
 public final class UIUtil {
 

@@ -52,10 +52,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 引擎web内核，封装系统webview，解析并渲染网页，并提供网页与手机原生系统之间的桥接。
- *
- * @author mdhuang 2011-9-29
+/***
+ * webview
  */
 public class BrowserWebView extends WebView {
 
@@ -430,8 +428,6 @@ public class BrowserWebView extends WebView {
 
     /**
      * web辅助类
-     *
-     * @author mdhuang 2011-9-29
      */
     private class IFlyWebChromeClient extends WebChromeClient {
         @Override
@@ -523,8 +519,6 @@ public class BrowserWebView extends WebView {
 
     /**
      * web辅助类
-     *
-     * @author mdhuang 2011-9-29
      */
     private class IFlyWebViewClient extends WebViewClient {
         /**
@@ -722,8 +716,6 @@ public class BrowserWebView extends WebView {
 
     /**
      * 浏览器下载监听
-     *
-     * @author mdhuang 2012-9-12
      */
     public class IFlyWebViewDownLoadListener implements DownloadListener {
         @Override

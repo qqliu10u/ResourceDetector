@@ -7,9 +7,6 @@ import android.webkit.WebView;
 
 /**
  * 浏览器内核监听器
- * 
- * @author mdhuang 2011-10-23
- * 
  */
 public interface IWebviewEventListener {
 	boolean shouldOverrideUrlLoading(WebView view, String url);
