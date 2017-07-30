@@ -10,7 +10,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * qqliu
+ * author
  * 2016/12/2.
  */
 
@@ -67,7 +67,7 @@ public class ObjectPool<T> {
             } else {
                 if(mCreateViewOnUIThread) {
                     mCreateObjectLockHelper.beginLockAction();
-                    UITaskRunner.getHandler().post(new Runnable() {
+                    TaskRunner.getUIHandler().post(new Runnable() {
                         @Override
                         public void run() {
                             mPool.add(mFactory.createObject());

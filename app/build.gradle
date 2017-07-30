@@ -25,4 +25,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.tumblr:jumblr:0.0.11'
+    compile 'org.jsoup:jsoup:1.10.2'
 }

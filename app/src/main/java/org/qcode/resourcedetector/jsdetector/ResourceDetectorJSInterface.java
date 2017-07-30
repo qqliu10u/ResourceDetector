@@ -2,15 +2,15 @@ package org.qcode.resourcedetector.jsdetector;
 
 import android.webkit.JavascriptInterface;
 
+import org.qcode.resourcedetector.base.TaskRunner;
 import org.qcode.resourcedetector.common.ResourceDetectorConstant;
-import org.qcode.resourcedetector.base.UITaskRunner;
 import org.qcode.resourcedetector.base.WeakReferenceHelper;
 import org.qcode.resourcedetector.base.utils.Logging;
 import org.qcode.resourcedetector.base.utils.Utils;
 import org.qcode.resourcedetector.view.browser.BrowserWebView;
 
 /**
- * qqliu
+ * author
  * 2016/11/29.
  */
 
@@ -45,7 +45,7 @@ public class ResourceDetectorJSInterface {
 
 //        Logging.d(TAG, "onDetected()| type= " + type + " title= " + title + " url= " + decodedUrl);
 
-        UITaskRunner.getHandler().post(new Runnable() {
+        TaskRunner.getUIHandler().post(new Runnable() {
             @Override
             public void run() {
                 if(null != mActionListener) {
@@ -68,7 +68,7 @@ public class ResourceDetectorJSInterface {
             return;
         }
 
-        UITaskRunner.getHandler().post(new Runnable() {
+        TaskRunner.getUIHandler().post(new Runnable() {
             @Override
             public void run() {
                 if(null != mActionListener) {
@@ -92,7 +92,7 @@ public class ResourceDetectorJSInterface {
             return;
         }
 
-        UITaskRunner.getHandler().post(new Runnable() {
+        TaskRunner.getUIHandler().post(new Runnable() {
             @Override
             public void run() {
                 if(null != mActionListener) {

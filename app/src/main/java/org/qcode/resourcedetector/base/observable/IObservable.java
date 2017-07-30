@@ -5,7 +5,7 @@ package org.qcode.resourcedetector.base.observable;
  * 每个可被观察的对象，都应实现此接口，从而注册/反注册观察者；
  * 可被观察对象可通过持有Observable实例完成观察者相关逻辑
  *
- * qqliu
+ * author
  * 2016/9/19.
  */
 public interface IObservable<T> {

@@ -4,7 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 
 /**
- * qqliu
+ * author
  * 2016/7/14.
  */
 public class Utils {

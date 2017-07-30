@@ -10,7 +10,7 @@ import android.widget.TextView;
 import org.qcode.resourcedetector.base.utils.Logging;
 
 /**
- * qqliu
+ * author
  * 2016/12/5.
  */
 

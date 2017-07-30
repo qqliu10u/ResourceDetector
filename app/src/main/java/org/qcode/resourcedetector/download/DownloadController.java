@@ -14,7 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * qqliu
+ * author
  * 2016/11/30.
  */
 

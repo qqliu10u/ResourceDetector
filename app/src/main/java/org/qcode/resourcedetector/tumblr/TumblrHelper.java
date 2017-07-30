@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import static android.content.ContentValues.TAG;
 
 /**
- * qqliu
+ * author
  * 2016/12/5.
  */
 

@@ -11,7 +11,7 @@ import static android.content.ContentValues.TAG;
  * 逻辑上，waitForSignal()应比signalWaiter()先执行；
  * NOTICE:下一次wait/signal事件应在执行beginLockAction后再执行
  *
- * qqliu
+ * author
  * 2016/11/25.
  */
 

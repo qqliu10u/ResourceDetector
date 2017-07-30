@@ -23,7 +23,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.qcode.resourcedetector.base.UITaskRunner;
+import org.qcode.resourcedetector.base.TaskRunner;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -305,7 +305,7 @@ public final class UIUtil {
 		if (null == mStaticToastImpl) {
 			//需要在主线程创建toast实例
 			if (Looper.myLooper() != Looper.getMainLooper()) {
-				UITaskRunner.getHandler().post(new Runnable() {
+				TaskRunner.getUIHandler().post(new Runnable() {
 					@Override
 					public void run() {
 						toast(context, msg, isLong);
@@ -331,7 +331,7 @@ public final class UIUtil {
 			//当前在zh主线程
 			mStaticToastImpl.show();
 		} else {
-			UITaskRunner.getHandler().post(new Runnable() {
+			TaskRunner.getUIHandler().post(new Runnable() {
 				@Override
 				public void run() {
 					mStaticToastImpl.show();

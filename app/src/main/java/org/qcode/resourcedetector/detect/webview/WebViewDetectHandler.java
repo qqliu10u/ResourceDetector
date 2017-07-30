@@ -1,20 +1,25 @@
-package org.qcode.resourcedetector.detect;
+package org.qcode.resourcedetector.detect.webview;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.webkit.WebView;
 
 import org.qcode.resourcedetector.ResourceDetectorApp;
 import org.qcode.resourcedetector.base.IObjectFactory;
 import org.qcode.resourcedetector.base.LockWaitNotifyHelper;
 import org.qcode.resourcedetector.base.ObjectPool;
-import org.qcode.resourcedetector.base.UITaskRunner;
+import org.qcode.resourcedetector.base.TaskRunner;
 import org.qcode.resourcedetector.base.WeakReferenceHelper;
-import org.qcode.resourcedetector.base.observable.IObservable;
 import org.qcode.resourcedetector.base.observable.Observable;
 import org.qcode.resourcedetector.base.utils.Logging;
 import org.qcode.resourcedetector.base.utils.Utils;
 import org.qcode.resourcedetector.common.DetectErrorCode;
 import org.qcode.resourcedetector.common.ResourceDetectorConstant;
+import org.qcode.resourcedetector.detect.AbsDetectHandler;
+import org.qcode.resourcedetector.detect.helper.DetectingItemHelper;
+import org.qcode.resourcedetector.detect.interfaces.IDetectEventListener;
+import org.qcode.resourcedetector.detect.interfaces.IDetectHandler;
 import org.qcode.resourcedetector.download.DownloadController;
 import org.qcode.resourcedetector.download.entities.DownloadTask;
 import org.qcode.resourcedetector.jsdetector.JSResourceDetector;
@@ -27,14 +32,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class DetectActionHandler implements IObservable<IDetectEventListener> {
-    private static final String TAG = "DetectActionHandler";
+public class WebViewDetectHandler extends AbsDetectHandler {
+    private static final String TAG = "WebViewDetectHandler";
 
     //使用的WebView池
     private ObjectPool<BrowserWebView> mWebViewPool = new ObjectPool<BrowserWebView>();
-
-    //探测事件监听
-    private Observable<IDetectEventListener> mObservable = new Observable<IDetectEventListener>();
 
     //加载的页面链条管理类
     private DetectingItemHelper mDetectingItemHelper = new DetectingItemHelper();
@@ -45,25 +47,18 @@ public class DetectActionHandler implements IObservable<IDetectEventListener> {
     //不支持探测的url管理
     private ExcludedWebsiteHelper mExcludedWebsiteHelper = new ExcludedWebsiteHelper();
 
-    private static volatile DetectActionHandler mInstance;
-
-    private DetectActionHandler() {
+    public WebViewDetectHandler() {
         mWebViewPool.setFactory(mWebViewFactory);
         mWebViewPool.setMaxSize(5);
     }
 
-    public static DetectActionHandler getInstance() {
-        if (null == mInstance) {
-            synchronized (DetectActionHandler.class) {
-                if (null == mInstance) {
-                    mInstance = new DetectActionHandler();
-                }
-            }
-        }
-        return mInstance;
+    @Override
+    public boolean canDetect(String url) {
+        return true;
     }
 
     //在WebView内加载url
+    @Override
     public int detectUrl(String url, String parentUrl) {
         if (Utils.isEmpty(url)) {
             return DetectErrorCode.ILLEGAL_PARAM;
@@ -74,7 +69,7 @@ public class DetectActionHandler implements IObservable<IDetectEventListener> {
         }
 
         if (Utils.isEmpty(parentUrl)) {
-            mObservable.sendEvent("onDetectProgressBegin", url);
+            sendEvent("onDetectProgressBegin", url);
         }
 
         //添加探测任务
@@ -89,6 +84,11 @@ public class DetectActionHandler implements IObservable<IDetectEventListener> {
         return DetectErrorCode.OK;
     }
 
+    @Override
+    public boolean isDetecting(String url) {
+        return mDetectingItemHelper.contains(url);
+    }
+
     //开始回收加载完成的webview
     private void recycleWebView(BrowserWebView webView, String url) {
         mDetectingItemHelper.setItemDetected(url);
@@ -98,7 +98,7 @@ public class DetectActionHandler implements IObservable<IDetectEventListener> {
         ArrayList<String> detectedUrlList = mDetectingItemHelper.popDetectedRootItems();
         if (!Utils.isEmpty(detectedUrlList)) {
             for (String detectedUrl : detectedUrlList) {
-                mObservable.sendEvent("onDetectProgressComplete", detectedUrl);
+                sendEvent("onDetectProgressComplete", detectedUrl);
             }
         }
     }
@@ -117,7 +117,7 @@ public class DetectActionHandler implements IObservable<IDetectEventListener> {
 
                     final BrowserWebView webView = mWebViewPool.pop();
                     mLoadUrlLockHelper.beginLockAction();
-                    UITaskRunner.getHandler().post(new Runnable() {
+                    TaskRunner.getUIHandler().post(new Runnable() {
                                 @Override
                                 public void run() {
                                     loadUrlInWebview(webView, url);
@@ -135,32 +135,12 @@ public class DetectActionHandler implements IObservable<IDetectEventListener> {
             try {
                 webView.loadOriginUrl(url);
 
-                mObservable.sendEvent("onDetectUrlBegin", mDetectingItemHelper.getRootUrl(url), url);
+                sendEvent("onDetectUrlBegin", mDetectingItemHelper.getRootUrl(url), url);
             } finally {
                 mLoadUrlLockHelper.signalWaiter();
             }
         }
     };
-
-    @Override
-    public void addObserver(IDetectEventListener observer) {
-        mObservable.addObserver(observer);
-    }
-
-    @Override
-    public void removeObserver(IDetectEventListener observer) {
-        mObservable.removeObserver(observer);
-    }
-
-    @Override
-    public void removeObservers() {
-        mObservable.removeObservers();
-    }
-
-    @Override
-    public int countObservers() {
-        return mObservable.countObservers();
-    }
 
     private IObjectFactory<BrowserWebView> mWebViewFactory = new IObjectFactory<BrowserWebView>() {
 
@@ -179,10 +159,6 @@ public class DetectActionHandler implements IObservable<IDetectEventListener> {
             return webView;
         }
     };
-
-    public boolean isDetecting(String url) {
-        return mDetectingItemHelper.contains(url);
-    }
 
     private class DetectActionListener implements ResourceDetectorJSInterface.IActionListener {
 
@@ -209,31 +185,13 @@ public class DetectActionHandler implements IObservable<IDetectEventListener> {
                 pageUrl = "";
             }
 
-            mObservable.sendEvent("onDetected",
+            sendEvent("onDetected",
                     mDetectingItemHelper.getRootUrl(pageUrl), type, url);
-
-            //初始化用户名部分
-            String userName = TumblrHelper.getRootDirName(pageUrl);
-
-            //初始化pageTitle
-            String subName = pageTitle;
-            if(Utils.isEmpty(pageTitle)) {
-                subName = TumblrHelper.getSubDirName(pageUrl);
-            }
-
-            DownloadController.getInstance().startDownload(
-                    DownloadTask.create()
-                            .setType(type)
-                            .setDirectory(userName
-                                    + File.separator
-                                    + subName)
-                            .setTitle(null)
-                            .setDownloadUrl(url));
         }
 
         @Override
         public void onDetectCompleted(String pageUrl) {
-            mObservable.sendEvent("onDetectUrlComplete", mDetectingItemHelper.getRootUrl(pageUrl), pageUrl);
+            sendEvent("onDetectUrlComplete", mDetectingItemHelper.getRootUrl(pageUrl), pageUrl);
 
             recycleWebView(mWebView, pageUrl);
         }

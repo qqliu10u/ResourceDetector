@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.Window;
 
 /**
- * qqliu
+ * author
  * 2016/12/2.
  */
 

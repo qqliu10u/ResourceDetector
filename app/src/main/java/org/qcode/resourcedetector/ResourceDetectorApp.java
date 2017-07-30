@@ -7,7 +7,7 @@ import org.qcode.resourcedetector.base.Settings;
 import org.qcode.resourcedetector.jsdetector.JSResourceDetector;
 
 /**
- * qqliu
+ * author
  * 2016/12/1.
  */
 

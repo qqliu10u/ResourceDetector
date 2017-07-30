@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * <p>
  * NOTICE: the param sent by event should NOT be null
  * <p>
- * qqliu
+ * author
  * 2016/9/19.
  */
 public class Observable<T> implements IObservable<T> {

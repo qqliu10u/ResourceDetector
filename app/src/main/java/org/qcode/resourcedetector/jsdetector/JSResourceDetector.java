@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import static org.qcode.resourcedetector.base.utils.FileUtils.readTextFile;
 
 /**
- * qqliu
+ * author
  * 2016/11/28.
  */
 

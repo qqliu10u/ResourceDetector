@@ -1,4 +1,4 @@
-package org.qcode.resourcedetector.detect;
+package org.qcode.resourcedetector.detect.webview;
 
 import android.net.Uri;
 
@@ -7,7 +7,7 @@ import org.qcode.resourcedetector.base.utils.Utils;
 import java.util.ArrayList;
 
 /**
- * qqliu
+ * author
  * 2016/12/4.
  */
 

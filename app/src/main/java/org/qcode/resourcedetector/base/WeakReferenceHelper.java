@@ -3,7 +3,7 @@ package org.qcode.resourcedetector.base;
 import java.lang.ref.WeakReference;
 
 /**
- * qqliu
+ * author
  * 2016/10/19.
  */
 

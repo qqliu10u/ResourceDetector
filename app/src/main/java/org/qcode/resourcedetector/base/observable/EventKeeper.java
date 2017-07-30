@@ -12,7 +12,7 @@ import java.util.List;
  * 观察者事件对应方法的反射与缓存管理
  *
  * the method reflections and their cache to define how to notify an event out.
- * qqliu
+ * author
  * 2016/12/6.
  */
 

@@ -6,7 +6,7 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 
 /**
- * qqliu
+ * author
  * 2016/11/30.
  */
 

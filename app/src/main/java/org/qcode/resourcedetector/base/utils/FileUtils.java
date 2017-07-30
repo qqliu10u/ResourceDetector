@@ -14,7 +14,7 @@ import java.io.InputStream;
 import static android.content.ContentValues.TAG;
 
 /**
- * qqliu
+ * author
  * 2016/11/30.
  */
 

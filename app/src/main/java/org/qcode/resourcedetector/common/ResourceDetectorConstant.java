@@ -1,7 +1,7 @@
 package org.qcode.resourcedetector.common;
 
 /**
- * qqliu
+ * author
  * 2016/12/2.
  */
 

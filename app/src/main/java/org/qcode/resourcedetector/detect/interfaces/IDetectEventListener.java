@@ -1,7 +1,7 @@
-package org.qcode.resourcedetector.detect;
+package org.qcode.resourcedetector.detect.interfaces;
 
 /**
- * qqliu
+ * author
  * 2016/12/4.
  */
 

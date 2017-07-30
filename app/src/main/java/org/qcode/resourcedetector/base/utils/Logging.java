@@ -3,7 +3,7 @@ package org.qcode.resourcedetector.base.utils;
 import android.util.Log;
 
 /**
- * qqliu
+ * author
  * 2016/7/17.
  */
 public class Logging {

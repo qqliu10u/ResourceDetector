@@ -1,7 +1,7 @@
 package org.qcode.resourcedetector.download.entities;
 
 /**
- * qqliu
+ * author
  * 2016/11/30.
  */
 

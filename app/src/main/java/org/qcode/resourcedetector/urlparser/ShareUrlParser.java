@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 /**
- * qqliu
+ * author
  * 2016/11/28.
  */
 

@@ -2,6 +2,7 @@ package org.qcode.resourcedetector;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Layout;
 import android.text.method.ScrollingMovementMethod;
@@ -13,10 +14,19 @@ import android.widget.TextView;
 import org.qcode.resourcedetector.base.utils.Logging;
 import org.qcode.resourcedetector.base.utils.UIUtil;
 import org.qcode.resourcedetector.base.utils.Utils;
-import org.qcode.resourcedetector.detect.DetectActionHandler;
-import org.qcode.resourcedetector.detect.IDetectEventListener;
+import org.qcode.resourcedetector.detect.AbsDetectHandler;
+import org.qcode.resourcedetector.detect.DetectHandler;
+import org.qcode.resourcedetector.detect.entities.ResourceType;
+import org.qcode.resourcedetector.detect.interfaces.IDetectHandler;
+import org.qcode.resourcedetector.detect.webview.WebViewDetectHandler;
+import org.qcode.resourcedetector.detect.interfaces.IDetectEventListener;
+import org.qcode.resourcedetector.download.DownloadController;
+import org.qcode.resourcedetector.download.entities.DownloadTask;
+import org.qcode.resourcedetector.tumblr.TumblrHelper;
 import org.qcode.resourcedetector.urlparser.ShareUrlParser;
 import org.qcode.resourcedetector.view.LoadingView;
+
+import java.io.File;
 
 public class DetectActivity extends BaseActivity {
     private static final String TAG = "DetectActivity";
@@ -27,7 +37,7 @@ public class DetectActivity extends BaseActivity {
     //当前正在嗅探的转圈动画
     private LoadingView mLoadingView;
 
-    private DetectActionHandler mDetectActionHandler;
+    private AbsDetectHandler mDetectHandler;
     private String mUrl;
     private EditText mEdtTextUrlInput;
     private Button mBtnBeginDetect;
@@ -41,8 +51,10 @@ public class DetectActivity extends BaseActivity {
         setContentView(R.layout.activity_detect);
         initView(this);
 
-        mDetectActionHandler = DetectActionHandler.getInstance();
-        mDetectActionHandler.addObserver(mDetectEventListener);
+        //Tumblr资源嗅探处于试验状态
+//        mDetectHandler = DetectHandler.getTumblrHandler();
+        mDetectHandler = DetectHandler.getWebHandler();
+        mDetectHandler.addObserver(mDetectEventListener);
 
         initIntent(getIntent());
     }
@@ -95,7 +107,7 @@ public class DetectActivity extends BaseActivity {
                 mUrl = url;
 
                 setInputEnabled(false);
-                mDetectActionHandler.detectUrl(mUrl, null);
+                mDetectHandler.detectUrl(mUrl, null);
             }
         });
     }
@@ -108,7 +120,7 @@ public class DetectActivity extends BaseActivity {
 
         setInputEnabled(false);
         mEdtTextUrlInput.setText(mUrl);
-        mDetectActionHandler.detectUrl(mUrl, null);
+        mDetectHandler.detectUrl(mUrl, null);
     }
 
     private void addTextToView(String text) {
@@ -157,12 +169,31 @@ public class DetectActivity extends BaseActivity {
             }
 
             String typeName = "资源";
-            if("pic".equals(type)) {
+            if(ResourceType.PIC.equals(type)) {
                 typeName = "图片";
-            } else if("video".equals(type)) {
+            } else if(ResourceType.VIDEO.equals(type)) {
                 typeName = "视频";
             }
             addTextToView(">>>>**探测到"+ typeName + ": " + url + "\n");
+
+            //初始化用户名部分
+            String userName = TumblrHelper.getRootDirName(rootUrl);
+
+            try {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse(url));
+                ResourceDetectorApp.getAppContext().startActivity(intent);
+            } catch (Exception ex) {
+                DownloadController.getInstance().startDownload(
+                        DownloadTask.create()
+                                .setType(type)
+                                .setDirectory(userName)
+                                .setTitle(null)
+                                .setDownloadUrl(url));
+            }
         }
 
         @Override
@@ -192,8 +223,8 @@ public class DetectActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mDetectActionHandler.removeObserver(mDetectEventListener);
-        if(null != mUrl && mDetectActionHandler.isDetecting(mUrl)) {
+        mDetectHandler.removeObserver(mDetectEventListener);
+        if(null != mUrl && mDetectHandler.isDetecting(mUrl)) {
             UIUtil.showToast(this, "切换到后台探测");
         }
     }

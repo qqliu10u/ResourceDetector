@@ -13,7 +13,7 @@ import android.widget.TextView;
 import org.qcode.resourcedetector.R;
 
 /**
- * qqliu
+ * author
  * 2016/8/29.
  */
 public class LoadingView extends FrameLayout {
